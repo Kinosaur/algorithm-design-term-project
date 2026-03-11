@@ -83,7 +83,6 @@ def main():
         # Execute the memoized solver for the full sequence [0, E-1]
         ans = solve_memo(exercises, 0, E - 1, memo)
 
-        # Output exactly in the requested format
         print(f"Case #{t}: {ans}")
 
 if __name__ == '__main__':
