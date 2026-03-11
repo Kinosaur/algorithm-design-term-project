@@ -15,31 +15,39 @@ def get_shared_weights(exercises, start_idx, end_idx):
             
     return sum(shared)
 
-def solve_naive(exercises, start_idx, end_idx):
+def solve_memo(exercises, start_idx, end_idx, memo):
     """
-    Brute force recursion. Explores every binary partition of the interval.
+    Memoized recursion. Explores every binary partition of the interval,
+    caching results by (start_idx, end_idx) to avoid recomputation.
     """
+    # Return cached result if already computed
+    if (start_idx, end_idx) in memo:
+        return memo[(start_idx, end_idx)]
+
     # Base case: Single exercise
     if start_idx == end_idx:
-        return 2 * sum(exercises[start_idx])
-    
+        result = 2 * sum(exercises[start_idx])
+        memo[(start_idx, end_idx)] = result
+        return result
+
     # Calculate savings for the global base of this interval
     shared_count = get_shared_weights(exercises, start_idx, end_idx)
     savings = 2 * shared_count
-    
+
     best_cost = float('inf')
-    
+
     # Test every split point k
     for k in range(start_idx, end_idx):
-        cost_left = solve_naive(exercises, start_idx, k)
-        cost_right = solve_naive(exercises, k + 1, end_idx)
-        
+        cost_left = solve_memo(exercises, start_idx, k, memo)
+        cost_right = solve_memo(exercises, k + 1, end_idx, memo)
+
         # Total Cost = Left + Right - Duplicated Global Base
         total_cost = cost_left + cost_right - savings
-        
+
         if total_cost < best_cost:
             best_cost = total_cost
-            
+
+    memo[(start_idx, end_idx)] = best_cost
     return best_cost
 
 def main():
@@ -50,17 +58,17 @@ def main():
     input_data = sys.stdin.read().split()
     if not input_data:
         return
-    
+
     # Line 1: T (Number of test cases)
     T = int(input_data[0])
     idx = 1
-    
+
     for t in range(1, T + 1):
         # Read E (Exercises) and W (Weight Types)
         E = int(input_data[idx])
         W = int(input_data[idx+1])
         idx += 2
-        
+
         # Read the matrix of weight requirements
         exercises = []
         for _ in range(E):
@@ -69,10 +77,12 @@ def main():
                 ex.append(int(input_data[idx]))
                 idx += 1
             exercises.append(ex)
-            
-        # Execute the naive solver for the full sequence [0, E-1]
-        ans = solve_naive(exercises, 0, E - 1)
-        
+
+        memo = {}
+
+        # Execute the memoized solver for the full sequence [0, E-1]
+        ans = solve_memo(exercises, 0, E - 1, memo)
+
         # Output exactly in the requested format
         print(f"Case #{t}: {ans}")
 
