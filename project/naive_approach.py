@@ -57,6 +57,8 @@ def main():
     # Line 1: T (Number of test cases)
     T = int(input_data[0])
     idx = 1
+
+    total_start_time = time.perf_counter()
     
     for t in range(1, T + 1):
         # Read E (Exercises) and W (Weight Types)
@@ -86,6 +88,12 @@ def main():
             f"[Stats] Case #{t} | Recursions: {recursion_counter['calls']} | Runtime: {elapsed_ms:.3f} ms",
             file=sys.stderr,
         )
+
+    total_elapsed_ms = (time.perf_counter() - total_start_time) * 1000
+    print(
+        f"[Total] All {T} test cases completed in {total_elapsed_ms:.3f} ms",
+        file=sys.stderr,
+    )
 
 if __name__ == '__main__':
     main()
