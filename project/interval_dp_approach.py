@@ -1,6 +1,10 @@
 import sys
 
 def solve_interval_dp(exercises):
+    """
+    Interval DP approach. Explores every binary partition of the interval.
+    """
+    
     E = len(exercises)
     W = len(exercises[0])
 
