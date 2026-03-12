@@ -1,4 +1,5 @@
 import sys
+import time
 
 def get_shared_weights(exercises, start_idx, end_idx):
     """
@@ -15,10 +16,12 @@ def get_shared_weights(exercises, start_idx, end_idx):
             
     return sum(shared)
 
-def solve_naive(exercises, start_idx, end_idx):
+def solve_naive(exercises, start_idx, end_idx, recursion_counter):
     """
     Brute force recursion. Explores every binary partition of the interval.
     """
+    recursion_counter["calls"] += 1
+
     # Base case: Single exercise
     if start_idx == end_idx:
         return 2 * sum(exercises[start_idx])
@@ -31,8 +34,8 @@ def solve_naive(exercises, start_idx, end_idx):
     
     # Test every split point k
     for k in range(start_idx, end_idx):
-        cost_left = solve_naive(exercises, start_idx, k)
-        cost_right = solve_naive(exercises, k + 1, end_idx)
+        cost_left = solve_naive(exercises, start_idx, k, recursion_counter)
+        cost_right = solve_naive(exercises, k + 1, end_idx, recursion_counter)
         
         # Total Cost = Left + Right - Duplicated Global Base
         total_cost = cost_left + cost_right - savings
@@ -70,11 +73,19 @@ def main():
                 idx += 1
             exercises.append(ex)
             
+        recursion_counter = {"calls": 0}
+
         # Execute the naive solver for the full sequence [0, E-1]
-        ans = solve_naive(exercises, 0, E - 1)
+        start_time = time.perf_counter()
+        ans = solve_naive(exercises, 0, E - 1, recursion_counter)
+        elapsed_ms = (time.perf_counter() - start_time) * 1000
         
         # Output exactly in the requested format
         print(f"Case #{t}: {ans}")
+        print(
+            f"[Stats] Case #{t} | Recursions: {recursion_counter['calls']} | Runtime: {elapsed_ms:.3f} ms",
+            file=sys.stderr,
+        )
 
 if __name__ == '__main__':
     main()

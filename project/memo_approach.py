@@ -1,4 +1,5 @@
 import sys
+import time
 
 def get_shared_weights(exercises, start_idx, end_idx):
     """
@@ -15,11 +16,13 @@ def get_shared_weights(exercises, start_idx, end_idx):
             
     return sum(shared)
 
-def solve_memo(exercises, start_idx, end_idx, memo):
+def solve_memo(exercises, start_idx, end_idx, memo, recursion_counter):
     """
     Memoized recursion. Explores every binary partition of the interval,
     caching results by (start_idx, end_idx) to avoid recomputation.
     """
+    recursion_counter["calls"] += 1
+
     # Return cached result if already computed
     if (start_idx, end_idx) in memo:
         return memo[(start_idx, end_idx)]
@@ -38,8 +41,8 @@ def solve_memo(exercises, start_idx, end_idx, memo):
 
     # Test every split point k
     for k in range(start_idx, end_idx):
-        cost_left = solve_memo(exercises, start_idx, k, memo)
-        cost_right = solve_memo(exercises, k + 1, end_idx, memo)
+        cost_left = solve_memo(exercises, start_idx, k, memo, recursion_counter)
+        cost_right = solve_memo(exercises, k + 1, end_idx, memo, recursion_counter)
 
         # Total Cost = Left + Right - Duplicated Global Base
         total_cost = cost_left + cost_right - savings
@@ -79,11 +82,18 @@ def main():
             exercises.append(ex)
 
         memo = {}
+        recursion_counter = {"calls": 0}
 
         # Execute the memoized solver for the full sequence [0, E-1]
-        ans = solve_memo(exercises, 0, E - 1, memo)
+        start_time = time.perf_counter()
+        ans = solve_memo(exercises, 0, E - 1, memo, recursion_counter)
+        elapsed_ms = (time.perf_counter() - start_time) * 1000
 
         print(f"Case #{t}: {ans}")
+        print(
+            f"[Stats] Case #{t} | Recursions: {recursion_counter['calls']} | Runtime: {elapsed_ms:.3f} ms",
+            file=sys.stderr,
+        )
 
 if __name__ == '__main__':
     main()
