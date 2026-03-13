@@ -1,3 +1,8 @@
+# Kaung Khant Lin - 6540131
+# Thit Lwin Win Thant - 6540122
+# 542
+# CSX 3009 - Term Project
+
 import sys
 
 def get_shared_weights(exercises, start_idx, end_idx):
