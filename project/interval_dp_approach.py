@@ -1,5 +1,4 @@
 import sys
-import time
 
 def solve_interval_dp(exercises):
     """
@@ -55,8 +54,6 @@ def main():
     T = int(input_data[0])
     idx = 1
 
-    total_start_time = time.perf_counter()
-
     for t in range(1, T + 1):
         E = int(input_data[idx])
         W = int(input_data[idx + 1])
@@ -68,21 +65,8 @@ def main():
             idx += W
             exercises.append(ex)
 
-        start_time = time.perf_counter()
         ans = solve_interval_dp(exercises)
-        elapsed_ms = (time.perf_counter() - start_time) * 1000
-
         print(f"Case #{t}: {ans}")
-        print(
-            f"[Stats] Case #{t} | Runtime: {elapsed_ms:.3f} ms",
-            file=sys.stderr,
-        )
-
-    total_elapsed_ms = (time.perf_counter() - total_start_time) * 1000
-    print(
-        f"[Total] All {T} test cases completed in {total_elapsed_ms:.3f} ms",
-        file=sys.stderr,
-    )
 
 if __name__ == '__main__':
     main()

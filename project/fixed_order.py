@@ -1,5 +1,4 @@
 import sys
-import time
 
 def solve_fixed_order(exercises):
     """
